@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Weather Application</title>
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+    </head>
+    <style>
+        .main{
+            margin:100px 300px 100px 300px;
+            background-color: Black;
+            color: ghostwhite;
+            text-align: Center;
+            font-family:sans-serif;
+            font-size: 20px;
+            
+        }
+        h1{
+            padding-top: 40px;
+        }
+        #div1{
+            padding-top: 20px;
+        }
+    </style>
+    <body>
+        <div class ="container">
+            <div class="jumbotron main" >
+                <h1>Weather Application</h1><br/><br/>
+                <button type="button" class="btn btn-info" id="Button">Get Weather</button>
+                <div id="div1"></div>
+        </div>
+        </div>
+        <script>
+           
+            window.onload = function(){
+                 var latitude,longitude, response;
+                    navigator.geolocation.getCurrentPosition(function(position){
+                        latitude=position.coords.latitude;
+                        longitude=position.coords.longitude;
+                    });
+
+                   
+               
+                var myBtn = document.getElementById('Button');
+
+                myBtn.addEventListener('click', function(event) {
+   
+            
+                var xhr= new XMLHttpRequest();
+                var url= "http://api.openweathermap.org/data/2.5/weather?lat="+latitude+"&lon=" +longitude + "&APPID=188b68e6b443a5380ce7ee0f0bb49cfc";
+                xhr.open("GET",url, true);
+                xhr.onreadystatechange= function(){
+                if ((xhr.readyState == 4)&&(xhr.status == 200)) {
+
+                response= JSON.parse(xhr.responseText);
+                    console.log(response);
+                    var item={};
+                    item.place=response.name+", "+response.sys.country;
+                    item.temp=(response.main.temp - 273.15).toFixed(0) + "°C";
+                    item.des= response.weather[0].description;
+                
+                    append(item);
+                     
+                }
+                 
+            }
+            xhr.send(null);
+                    
+    });
+                
+                function append(item){
+                    var  para,element,node,linebreak;
+                    para= document.createElement("p");
+                    
+                        node = document.createTextNode("Location: "+ item.place);
+                        para.appendChild(node);
+                        element = document.getElementById("div1");
+                        element.appendChild(para);
+                        para= document.createElement("p");
+                        node = document.createTextNode("Temperature: "+ item.temp);
+                        para.appendChild(node);
+                        element.appendChild(para);
+                        para= document.createElement("p");
+                        node = document.createTextNode("Weather Description: "+ item.des);
+                        para.appendChild(node);
+                        element.appendChild(para);
+                        linebreak= document.createElement("br");
+                        element.appendChild(linebreak);
+                }
+                
+        }
+
+        </script>
+    </body>
+</html>
